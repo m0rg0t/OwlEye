@@ -5,9 +5,13 @@
 const int VIBRO_PIN = 2; //Digital pin where vibro attahed
 const int LED_PIN = 3; //Digital pin where led attached
 const int BUZZER_PIN = 4; //Digital pin where buzzer sound stuff is attached
-const int minTime = 3; //minimal amunt of time we use
-const int HC_TRIG_PIN = 12;
-const int HC_ECHO_PIN = 13;
+const int HC_TRIG_PIN = 12; //Triger pin of HC-SR04 sensor
+const int HC_ECHO_PIN = 13; //Echo pin of HC-SR04 sensor
+
+const int MIN_TIME = 10; //minimal amunt of time we use
+const int SIGNAL_INCREMENT_TIME = MIN_TIME * 3;
+const int SIGNAL_PLAY_TIME = 20;
+
 const int VIBRO_ADDITIONAL_TIME = 10;
 
 int signalTimeout = 1000;
@@ -39,9 +43,9 @@ void loop() {
   Serial.print("Distance: ");
   Serial.println(distance);
 
-  signalTimeout = minTime * distance;
-  signalBuzzCounter = signalBuzzCounter + minTime;
-  signalVibroCounter =  signalVibroCounter + minTime;
+  signalTimeout = MIN_TIME * distance;
+  signalBuzzCounter = signalBuzzCounter + SIGNAL_INCREMENT_TIME;
+  signalVibroCounter =  signalVibroCounter + SIGNAL_INCREMENT_TIME;
   Serial.println("---");
 
   //check for vibro motor
@@ -52,9 +56,9 @@ void loop() {
 
   if (signalBuzzCounter >= signalTimeout) {
     digitalWrite(LED_PIN, HIGH);
-    tone(BUZZER_PIN, 1000);
+    tone(BUZZER_PIN, distance * 5);
     signalBuzzCounter = 0;
     signalVibroCounter = 0; //we reset vibro here too
   }
-  delay(minTime);
+  delay(SIGNAL_PLAY_TIME);
 }
